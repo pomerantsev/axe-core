@@ -17,8 +17,8 @@ describe('axe.utils.getFlattenedTree', function () {
     assert.equal(virtualDOM.length, 1); // host
     assert.equal(virtualDOM[0].actualNode.nodeName, 'DIV');
 
-    var parentDOM = virtualDOM[0];
-    virtualDOM = virtualDOM[0].children;
+    var parentDOM = virtualDOM[0].children[0];
+    virtualDOM = virtualDOM[0].children[0].children;
     assert.equal(virtualDOM.length, 3);
     assert.equal(virtualDOM[0].actualNode.nodeName, 'STYLE');
     assert.equal(virtualDOM[0].parent, parentDOM);
@@ -54,18 +54,22 @@ describe('axe.utils.getFlattenedTree', function () {
     var virtualDOM = axe.utils.getFlattenedTree(fixture);
     assert.isUndefined(virtualDOM[0].shadowId); //fixture
     assert.isUndefined(virtualDOM[0].children[0].shadowId); //host
-    assert.isDefined(virtualDOM[0].children[0].children[0].shadowId);
-    assert.isDefined(virtualDOM[0].children[0].children[1].shadowId);
+    assert.isDefined(
+      virtualDOM[0].children[0].children[0].children[0].shadowId
+    );
+    assert.isDefined(
+      virtualDOM[0].children[0].children[0].children[1].shadowId
+    );
     assert.isDefined(virtualDOM[0].children[1].children[0].shadowId);
     // shadow IDs in the same shadowRoot must be the same
     assert.equal(
-      virtualDOM[0].children[0].children[0].shadowId,
-      virtualDOM[0].children[0].children[1].shadowId
+      virtualDOM[0].children[0].children[0].children[0].shadowId,
+      virtualDOM[0].children[0].children[0].children[1].shadowId
     );
     // should cascade
     assert.equal(
-      virtualDOM[0].children[0].children[1].shadowId,
-      virtualDOM[0].children[0].children[1].children[0].shadowId
+      virtualDOM[0].children[0].children[0].children[1].shadowId,
+      virtualDOM[0].children[0].children[0].children[1].children[0].shadowId
     );
     // shadow IDs in different shadowRoots must be different
     assert.notEqual(
@@ -212,20 +216,20 @@ describe('axe.utils.getFlattenedTree', function () {
       it("getFlattenedTree's virtual DOM should have the fallback content", function () {
         var virtualDOM = axe.utils.getFlattenedTree(fixture);
         assert.isTrue(
-          virtualDOM[0].children[2].children[1].children[0].children.length ===
-            2
+          virtualDOM[0].children[2].children[0].children[1].children[0].children
+            .length === 2
         );
         assert.isTrue(
-          virtualDOM[0].children[2].children[1].children[0].children[0]
-            .actualNode.nodeType === 3
+          virtualDOM[0].children[2].children[0].children[1].children[0]
+            .children[0].actualNode.nodeType === 3
         );
         assert.isTrue(
-          virtualDOM[0].children[2].children[1].children[0].children[0]
-            .actualNode.textContent === 'fallback content'
+          virtualDOM[0].children[2].children[0].children[1].children[0]
+            .children[0].actualNode.textContent === 'fallback content'
         );
         assert.isTrue(
-          virtualDOM[0].children[2].children[1].children[0].children[1]
-            .actualNode.nodeName === 'LI'
+          virtualDOM[0].children[2].children[0].children[1].children[0]
+            .children[1].actualNode.nodeName === 'LI'
         );
       });
     });
